@@ -1,8 +1,0 @@
-net\onima\onimadb\query\PlayerQuery.class
-net\onima\onimadb\insertion\faction\PlayerFactionInsertion.class
-net\onima\onimadb\insertion\PlayerInsertion.class
-net\onima\onimadb\listener\DatabaseListener.class
-net\onima\onimadb\OnimaDB.class
-net\onima\onimadb\query\faction\FactionQuery.class
-net\onima\onimadb\listener\PlayerListener.class
-net\onima\onimadb\insertion\faction\FactionInsertion.class

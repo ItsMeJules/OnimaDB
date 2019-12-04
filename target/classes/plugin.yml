@@ -1,6 +1,0 @@
-name: OnimaDB
-author: Jestiz
-main: net.onima.onimadb.OnimaDB
-version: 1.0
-description: Database
-depend: [OnimaAPI, OnimaFaction, OnimaGames, OnimaBoard]
