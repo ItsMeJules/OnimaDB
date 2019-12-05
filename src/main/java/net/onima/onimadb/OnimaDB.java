@@ -67,7 +67,6 @@ public class OnimaDB extends JavaPlugin {
 				
 				if (!result.isFailed())
 					new PlayerFaction(result.getValue("name", String.class)).queryDatabase(result);
-				
 			});
 			
 			try {
@@ -117,11 +116,15 @@ public class OnimaDB extends JavaPlugin {
 		
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			for (Saver saver : new CopyOnWriteArrayList<>(OnimaAPI.getSavers())) {
-				if (saver instanceof NoSQLSaver)
+				if (saver instanceof NoSQLSaver) {
+					
+					if (saver instanceof Faction)
+						System.out.println(((Faction) saver).getUUID() + "/" + ((Faction) saver).getName());
 					Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent((NoSQLSaver) saver));
-				else if (saver instanceof FileSaver)
+				} else if (saver instanceof FileSaver)
 					((FileSaver) saver).serialize();
 			}
+			System.out.println(" ");
 		}, 20L, 100L);
 		
 		OnimaAPI.sendConsoleMessage("====================§6[§3ACTIVE EN (" + (System.currentTimeMillis() - started) + "ms)§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);

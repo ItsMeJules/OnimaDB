@@ -46,6 +46,9 @@ public class PlayerInsertion extends MongoAccessor {
 		OfflineAPIPlayer offlineApi = offline.getOfflineApiPlayer();
 		OfflineFPlayer offlineF = offline.getOfflineFPlayer();
 		
+		if (!offlineApi.getIpHistory().contains(offlineApi.getIP()))
+			offlineApi.getIpHistory().add(offlineApi.getIP());
+		
 		UUID uuid = offlineApi.getUUID();
 		Deathban deathban = offlineF.getDeathban();
 		List<String> alts = offlineApi.getAlts().stream()
