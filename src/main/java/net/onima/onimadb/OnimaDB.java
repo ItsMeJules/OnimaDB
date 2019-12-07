@@ -11,14 +11,15 @@ import com.mongodb.MongoException;
 
 import net.onima.onimaapi.OnimaAPI;
 import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent;
+import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent.Action;
 import net.onima.onimaapi.mongo.OnimaMongo;
 import net.onima.onimaapi.mongo.OnimaMongo.OnimaCollection;
 import net.onima.onimaapi.mongo.api.MongoAccessor;
 import net.onima.onimaapi.mongo.api.result.MongoQueryResult;
+import net.onima.onimaapi.mongo.saver.NoSQLSaver;
 import net.onima.onimaapi.players.APIPlayer;
 import net.onima.onimaapi.saver.FileSaver;
 import net.onima.onimaapi.saver.Saver;
-import net.onima.onimaapi.saver.mongo.NoSQLSaver;
 import net.onima.onimaapi.utils.ConfigurationService;
 import net.onima.onimaapi.utils.Methods;
 import net.onima.onimaboard.players.BoardPlayer;
@@ -117,14 +118,13 @@ public class OnimaDB extends JavaPlugin {
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			for (Saver saver : new CopyOnWriteArrayList<>(OnimaAPI.getSavers())) {
 				if (saver instanceof NoSQLSaver) {
+					NoSQLSaver mongoSaver = (NoSQLSaver) saver;
 					
-					if (saver instanceof Faction)
-						System.out.println(((Faction) saver).getUUID() + "/" + ((Faction) saver).getName());
-					Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent((NoSQLSaver) saver));
+					Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(mongoSaver, mongoSaver.shouldDelete() ? Action.DELETE : Action.WRITE, false));
 				} else if (saver instanceof FileSaver)
 					((FileSaver) saver).serialize();
+				
 			}
-			System.out.println(" ");
 		}, 20L, 100L);
 		
 		OnimaAPI.sendConsoleMessage("====================§6[§3ACTIVE EN (" + (System.currentTimeMillis() - started) + "ms)§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);

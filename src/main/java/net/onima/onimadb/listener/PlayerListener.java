@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import net.onima.onimaapi.event.mongo.AbstractPlayerLoadEvent;
 import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent;
 import net.onima.onimaapi.event.mongo.PlayerLoadEvent;
+import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent.Action;
 import net.onima.onimaapi.mongo.OnimaMongo;
 import net.onima.onimaapi.mongo.api.result.MongoQueryResult;
 import net.onima.onimaapi.players.APIPlayer;
@@ -77,7 +78,7 @@ public class PlayerListener implements Listener {
 				offlineF.queryDatabase(result);
 				offlineB.queryDatabase(result);
 			} else
-				Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(offlineB));
+				Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(offlineB, Action.WRITE, false));
 
 			offline.setIp(event.getAddress().getHostAddress());
 		}).execute();
