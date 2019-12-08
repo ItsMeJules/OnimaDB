@@ -25,6 +25,7 @@ import net.onima.onimaapi.utils.ConfigurationService;
 import net.onima.onimaboard.players.BoardPlayer;
 import net.onima.onimaboard.players.OfflineBoardPlayer;
 import net.onima.onimadb.query.PlayerQuery;
+import net.onima.onimafaction.OnimaFaction;
 import net.onima.onimafaction.players.FPlayer;
 import net.onima.onimafaction.players.OfflineFPlayer;
 
@@ -64,8 +65,7 @@ public class PlayerListener implements Listener {
 			MongoQueryResult result = (MongoQueryResult) mongoResult;
 			
 			if (result.isFailed()) {
-				event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-				event.setKickMessage(ConfigurationService.SQL_ERROR_LOADING_DATA);
+				event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ConfigurationService.SQL_ERROR_LOADING_DATA);
 				return;
 			} 
 			
@@ -77,8 +77,16 @@ public class PlayerListener implements Listener {
 				offline.queryDatabase(result);
 				offlineF.queryDatabase(result);
 				offlineB.queryDatabase(result);
-			} else
+			} else {
+				if (OnimaFaction.getInstance().getEOTW().isRunning()) {
+					event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "L'EOTW est en cours. Revenez demain pour le SOTW."
+							+ "\n\nSeulement les joueurs qui ont déjà"
+							+ "\njoué sur cette map peuvent rejoindre.");
+					return;
+				}
+				
 				Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(offlineB, Action.WRITE, false));
+			}
 
 			offline.setIp(event.getAddress().getHostAddress());
 		}).execute();
