@@ -14,8 +14,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.onima.onimaapi.event.mongo.AbstractPlayerLoadEvent;
 import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent;
-import net.onima.onimaapi.event.mongo.PlayerLoadEvent;
 import net.onima.onimaapi.event.mongo.DatabasePreUpdateEvent.Action;
+import net.onima.onimaapi.event.mongo.PlayerLoadEvent;
 import net.onima.onimaapi.mongo.OnimaMongo;
 import net.onima.onimaapi.mongo.api.result.MongoQueryResult;
 import net.onima.onimaapi.players.APIPlayer;
@@ -96,7 +96,7 @@ public class PlayerListener implements Listener {
 	public void onLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
 		
-		if (Bukkit.hasWhitelist() && !Bukkit.getWhitelistedPlayers().contains(player))
+		if (Bukkit.hasWhitelist() && !Bukkit.getWhitelistedPlayers().contains(player) && !player.isOp())
 			return;
 		
 		APIPlayer apiPlayer = new APIPlayer(player);
