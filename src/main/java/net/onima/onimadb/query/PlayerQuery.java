@@ -44,6 +44,7 @@ public class PlayerQuery extends MongoAccessor {
 			map.put("deathban", document.get("deathban", Document.class));
 			map.put("punishments", document.getList("punishments", Document.class));
 			map.put("notes", document.getList("notes", Document.class));
+			map.put("ignored", document.getList("ignored", String.class));
 		}
 		
 		((MongoQueryResult) result).setMap(map);

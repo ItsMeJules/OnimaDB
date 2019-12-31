@@ -54,6 +54,9 @@ public class PlayerInsertion extends MongoAccessor {
 		List<String> alts = offlineApi.getAlts().stream()
 				.map(UUID::toString)
 				.collect(Collectors.toCollection(() -> new ArrayList<>(offlineApi.getAlts().size())));
+		List<String> ignored = offlineApi.getIgnored().stream()
+				.map(UUID::toString)
+				.collect(Collectors.toCollection(() -> new ArrayList<>(offlineApi.getIgnored().size())));
 		
 		Document playerDoc = new Document("uuid", uuid.toString())
 				.append("kills", offlineApi.getKills()).append("deaths", offlineApi.getDeaths())
@@ -65,7 +68,7 @@ public class PlayerInsertion extends MongoAccessor {
 				.append("lives", offlineF.getLives()).append("scoreboard", offline.hasBoardToggled())
 				.append("staff_board", offline.hasStaffBoard()).append("alts", alts)
 				.append("faction_name", offlineF.getFaction() != null ? offlineF.getFaction().getName() : null)
-				.append("ip_history", offlineApi.getIpHistory());
+				.append("ip_history", offlineApi.getIpHistory()).append("ignored", ignored);
 		
 		playerDoc.append("ores", offlineApi.getMinedOres().getDocument());
 		playerDoc.append("options", offlineApi.getOptions().getDocument());
