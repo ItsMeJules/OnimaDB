@@ -24,6 +24,7 @@ import net.onima.onimaapi.players.utils.SpecialPlayerInventory;
 import net.onima.onimaapi.utils.ConfigurationService;
 import net.onima.onimaboard.players.BoardPlayer;
 import net.onima.onimaboard.players.OfflineBoardPlayer;
+import net.onima.onimadb.OnimaDB;
 import net.onima.onimadb.query.PlayerQuery;
 import net.onima.onimafaction.OnimaFaction;
 import net.onima.onimafaction.players.FPlayer;
@@ -123,9 +124,11 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
+		BoardPlayer boardPlayer = BoardPlayer.getPlayer(player);
 		
 		SpecialPlayerInventory.onDisconnect(player);
-		APIPlayer.getPlayer(player).getDisguiseManager().undisguise();
+		boardPlayer.getApiPlayer().getDisguiseManager().undisguise();
+		Bukkit.getScheduler().runTaskAsynchronously(OnimaDB.getInstance(), () -> new DatabasePreUpdateEvent(boardPlayer, DatabasePreUpdateEvent.Action.WRITE, false));
 	}
 	
 }
