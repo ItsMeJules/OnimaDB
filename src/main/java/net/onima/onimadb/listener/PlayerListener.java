@@ -86,7 +86,7 @@ public class PlayerListener implements Listener {
 					return;
 				}
 				
-				Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(offlineB, Action.WRITE, false));
+				offlineB.setFirstJoin(true);
 			}
 
 			offline.setIp(event.getAddress().getHostAddress());
@@ -119,6 +119,8 @@ public class PlayerListener implements Listener {
 		boardPlayer.getApiPlayer().loadJoin();
 		boardPlayer.getFPlayer().loadJoin();
 		boardPlayer.loadJoin();
+		
+		Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(boardPlayer, Action.WRITE, true));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)

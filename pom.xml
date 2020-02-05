@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>LATEST</version>
+      <version>3.11.0</version>
       <scope>provided</scope>
     </dependency>
   

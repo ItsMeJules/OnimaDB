@@ -1,6 +1,6 @@
 package net.onima.onimadb;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -24,6 +24,7 @@ import net.onima.onimaapi.utils.ConfigurationService;
 import net.onima.onimaapi.utils.Methods;
 import net.onima.onimaboard.players.BoardPlayer;
 import net.onima.onimadb.listener.DatabaseListener;
+import net.onima.onimadb.listener.DisableListener;
 import net.onima.onimadb.listener.PlayerListener;
 import net.onima.onimadb.query.PlayerQuery;
 import net.onima.onimadb.query.faction.FactionQuery;
@@ -63,7 +64,7 @@ public class OnimaDB extends JavaPlugin {
 		}
 		
 		for (Document document : OnimaMongo.get(OnimaCollection.PLAYER_FACTIONS).find()) {
-			MongoAccessor query = new FactionQuery(document, mongoResult ->  { 
+			MongoAccessor query = new FactionQuery(document, mongoResult -> {
 				MongoQueryResult result = (MongoQueryResult) mongoResult;
 				
 				if (!result.isFailed())
@@ -114,24 +115,31 @@ public class OnimaDB extends JavaPlugin {
 		
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DatabaseListener(), this);
-		
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-			for (Saver saver : new CopyOnWriteArrayList<>(OnimaAPI.getSavers())) {
-				if (saver instanceof NoSQLSaver) {
-					NoSQLSaver mongoSaver = (NoSQLSaver) saver;
-					
-					Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(mongoSaver, mongoSaver.shouldDelete() ? Action.DELETE : Action.WRITE, false));
-				} else if (saver instanceof FileSaver)
-					((FileSaver) saver).serialize();
-				
-			}
-		}, 20L, 100L);
+		Bukkit.getPluginManager().registerEvents(new DisableListener(), this);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> saveAll(), 20L * 60 * 5, 20L * 60 * 5);
 		
 		OnimaAPI.sendConsoleMessage("====================§6[§3ACTIVE EN (" + (System.currentTimeMillis() - started) + "ms)§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);
 	}
 
 	public void onDisable() {
 		OnimaAPI.sendConsoleMessage("====================§6[§cDESACTIVATION§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);
+	}
+	
+	private void saveAll() {
+		long saveStarted = System.currentTimeMillis();
+		
+		OnimaAPI.sendConsoleMessage("§3Sauvegarde du serveur en cours...", ConfigurationService.ONIMADB_PREFIX);
+		for (Saver saver : new CopyOnWriteArraySet<>(OnimaAPI.getSavers())) {
+			if (saver instanceof NoSQLSaver) {
+				NoSQLSaver mongoSaver = (NoSQLSaver) saver;
+				
+				Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(mongoSaver, mongoSaver.shouldDelete() ? Action.DELETE : Action.WRITE, false));
+			} else if (saver instanceof FileSaver)
+				((FileSaver) saver).serialize();
+			
+		}
+		
+		OnimaAPI.sendConsoleMessage("§3Sauvegarde du serveur finie ! §7(" + (System.currentTimeMillis() - saveStarted) + "ms)", ConfigurationService.ONIMADB_PREFIX);
 	}
 	
 	public static OnimaDB getInstance() {
