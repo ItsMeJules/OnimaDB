@@ -3,6 +3,7 @@ package net.onima.onimadb.insertion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -115,6 +116,7 @@ public class PlayerInsertion extends MongoAccessor {
 		playerDoc.append("restore_request", restoreRequestDocs);
 		playerDoc.append("punishments", punishmentDocs);
 		playerDoc.append("notes", notesDoc);
+		playerDoc.append("report_stats", offlineApi.getReportStastitics().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Map.Entry::getValue)));
 
 		OnimaMongo.get(OnimaCollection.PLAYERS).replaceOne(Filters.eq("uuid", offlineApi.getUUID().toString()), playerDoc, new ReplaceOptions().upsert(true));
 		callback.call(result);
