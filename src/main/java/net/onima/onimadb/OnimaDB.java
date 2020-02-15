@@ -18,6 +18,7 @@ import net.onima.onimaapi.mongo.api.MongoAccessor;
 import net.onima.onimaapi.mongo.api.result.MongoQueryResult;
 import net.onima.onimaapi.mongo.saver.NoSQLSaver;
 import net.onima.onimaapi.players.APIPlayer;
+import net.onima.onimaapi.report.Report;
 import net.onima.onimaapi.saver.FileSaver;
 import net.onima.onimaapi.saver.Saver;
 import net.onima.onimaapi.utils.ConfigurationService;
@@ -117,6 +118,7 @@ public class OnimaDB extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new DatabaseListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DisableListener(), this);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> saveAll(), 20L * 60 * 5, 20L * 60 * 5);
+		Bukkit.getScheduler().runTask(this, () -> Report.deserialize());
 		
 		OnimaAPI.sendConsoleMessage("====================§6[§3ACTIVE EN (" + (System.currentTimeMillis() - started) + "ms)§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);
 	}
