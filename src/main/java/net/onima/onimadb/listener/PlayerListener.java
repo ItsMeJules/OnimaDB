@@ -130,7 +130,7 @@ public class PlayerListener implements Listener {
 		
 		SpecialPlayerInventory.onDisconnect(player);
 		boardPlayer.getApiPlayer().getDisguiseManager().undisguise();
-		Bukkit.getScheduler().runTaskAsynchronously(OnimaDB.getInstance(), () -> new DatabasePreUpdateEvent(boardPlayer, DatabasePreUpdateEvent.Action.WRITE, false));
+		Bukkit.getScheduler().runTaskAsynchronously(OnimaDB.getInstance(), () -> Bukkit.getPluginManager().callEvent(new DatabasePreUpdateEvent(boardPlayer, DatabasePreUpdateEvent.Action.WRITE, false)));
 	}
 	
 }

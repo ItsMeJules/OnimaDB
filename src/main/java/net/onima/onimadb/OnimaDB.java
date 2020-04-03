@@ -118,8 +118,9 @@ public class OnimaDB extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new DatabaseListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DisableListener(), this);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> saveAll(), 20L * 60 * 5, 20L * 60 * 5);
-		Bukkit.getScheduler().runTask(this, () -> Report.deserialize());
+		Bukkit.getScheduler().runTaskLater(this, () -> Report.deserialize(), 3 * 20L);
 		
+		OnimaAPI.setLastSave(System.currentTimeMillis());
 		OnimaAPI.sendConsoleMessage("====================§6[§3ACTIVE EN (" + (System.currentTimeMillis() - started) + "ms)§6]§r====================", ConfigurationService.ONIMABOARD_PREFIX);
 	}
 
@@ -141,11 +142,14 @@ public class OnimaDB extends JavaPlugin {
 			
 		}
 		
-		OnimaAPI.sendConsoleMessage("§3Sauvegarde du serveur finie ! §7(" + (System.currentTimeMillis() - saveStarted) + "ms)", ConfigurationService.ONIMADB_PREFIX);
+		long now = System.currentTimeMillis();
+		
+		OnimaAPI.sendConsoleMessage("§3Sauvegarde du serveur finie ! §7(" + (now - saveStarted) + "ms)", ConfigurationService.ONIMADB_PREFIX);
+		OnimaAPI.setLastSave(now);
 	}
 	
 	public static OnimaDB getInstance() {
 		return instance;
 	}
-
+	
 }
